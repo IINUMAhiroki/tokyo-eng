@@ -35,4 +35,4 @@ docker-compose up --build
 
 ## 開発者
 
-[あなたの名前]
+numashi

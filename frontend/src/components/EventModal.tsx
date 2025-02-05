@@ -6,20 +6,33 @@ import ja from 'date-fns/locale/ja';
 interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedDates: Date[];
+  selectedDate: Date;
+  availableSlots: Date[];
+  onSave: (event: any) => void;
 }
 
-const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDates }) => {
+const EventModal: React.FC<EventModalProps> = ({
+  isOpen,
+  onClose,
+  selectedDate,
+  availableSlots,
+  onSave
+}) => {
   const [eventTitle, setEventTitle] = useState('');
   const [eventDescription, setEventDescription] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);
 
   const handleSubmit = async () => {
+    if (!selectedSlot) {
+      alert('時間枠を選択してください');
+      return;
+    }
+
     const event = {
       title: eventTitle,
       description: eventDescription,
-      candidates: selectedDates.map(date => ({
-        date: format(date, 'yyyy-MM-dd HH:mm:ss'),
-      })),
+      start: selectedSlot,
+      end: new Date(selectedSlot.getTime() + 60 * 60 * 1000), // 1時間後
     };
 
     try {
@@ -32,6 +45,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDates 
       });
 
       if (response.ok) {
+        onSave(event);
         onClose();
       }
     } catch (error) {
@@ -46,7 +60,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDates 
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group>
+          <Form.Group className="mb-3">
             <Form.Label>タイトル</Form.Label>
             <Form.Control
               type="text"
@@ -54,7 +68,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDates 
               onChange={(e) => setEventTitle(e.target.value)}
             />
           </Form.Group>
-          <Form.Group>
+          <Form.Group className="mb-3">
             <Form.Label>説明</Form.Label>
             <Form.Control
               as="textarea"
@@ -62,11 +76,18 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDates 
               onChange={(e) => setEventDescription(e.target.value)}
             />
           </Form.Group>
-          <Form.Group>
-            <Form.Label>候補日</Form.Label>
-            {selectedDates.map((date, index) => (
-              <div key={index}>
-                {format(date, 'yyyy年MM月dd日 HH:mm', { locale: ja })}
+          <Form.Group className="mb-3">
+            <Form.Label>候補時間枠</Form.Label>
+            {availableSlots.map((slot, index) => (
+              <div key={index} className="mb-2">
+                <Form.Check
+                  type="radio"
+                  id={`slot-${index}`}
+                  name="timeSlot"
+                  label={format(slot, 'M月d日(E) HH:mm', { locale: ja })}
+                  onChange={() => setSelectedSlot(slot)}
+                  checked={selectedSlot === slot}
+                />
               </div>
             ))}
           </Form.Group>
