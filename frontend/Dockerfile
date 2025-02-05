@@ -8,8 +8,10 @@ COPY package*.json ./
 # 依存関係のインストール
 RUN npm install
 
-# その他のファイルをコピー
-COPY . .
+# publicとsrcディレクトリをコピー
+COPY public/ public/
+COPY src/ src/
+COPY tsconfig.json ./
 
 EXPOSE 3000
 CMD ["npm", "start"]
