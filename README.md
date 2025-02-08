@@ -22,7 +22,7 @@ Google Calendarライクな日程調整アプリケーション
 docker-compose up --build
 
 # アクセス
-フロントエンド: http://localhost:3000
+フロントエンド: http://localhost:3001
 バックエンドAPI: http://localhost:8080
 データベース: localhost:3307
 ```

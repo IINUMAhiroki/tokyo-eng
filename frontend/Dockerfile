@@ -14,6 +14,6 @@ COPY src/ src/
 COPY tsconfig.json ./
 
 # 開発サーバーの起動
-EXPOSE 3000
+EXPOSE 3001
 ENV CI=true
 CMD ["npm", "start"]
